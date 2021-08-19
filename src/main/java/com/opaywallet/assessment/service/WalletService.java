@@ -16,8 +16,6 @@ public interface WalletService {
 
     Wallet findById(Long walletId);
 
-    Wallet findByWalletId(String walletId);
-
     double getBalance(Long walletId);
 
     List<Wallet> allWallets();

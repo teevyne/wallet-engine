@@ -11,6 +11,4 @@ public interface WalletTransactionService {
     ResponseEntity<String> withdraw(double amount, Long walletId);
 
     List<WalletTransaction> findAll();
-
-    WalletTransaction findById(Long transactionID);
 }

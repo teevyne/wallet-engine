@@ -17,7 +17,7 @@ public class WalletTransactionController {
     private WalletTransactionService walletTransactionService;
 
     @GetMapping("transactions")
-    public List<WalletTransaction> allTnxs(){
+    public List<WalletTransaction> allTransactions(){
         return walletTransactionService.findAll();
     }
 

@@ -60,11 +60,6 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public Wallet findByWalletId(String walletId) {
-        return walletRepository.findByWalletId(walletId);
-    }
-
-    @Override
     public double getBalance(Long id) {
         Optional<Wallet> wallet = Optional.of(walletRepository.findById(id).get());
         return wallet.get().getWalletBalance();

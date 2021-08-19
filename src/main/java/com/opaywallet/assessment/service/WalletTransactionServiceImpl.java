@@ -26,8 +26,6 @@ public class WalletTransactionServiceImpl implements WalletTransactionService{
     @Autowired
     private WalletRepository walletRepository;
 
-    CustomerTransaction customerTransaction = new CustomerTransaction();
-
     public ResponseEntity<String> deposit(double amount, Long walletId) {
 
         WalletTransaction walletTransaction = new WalletTransaction(TransactionType.DEPOSIT.getId(), amount, new Date());
@@ -70,10 +68,5 @@ public class WalletTransactionServiceImpl implements WalletTransactionService{
     @Override
     public List<WalletTransaction> findAll() {
         return walletTransactionRepository.findAll();
-    }
-
-    @Override
-    public WalletTransaction findById(Long transactionID) {
-        return walletTransactionRepository.findById(transactionID).orElse(null);
     }
 }

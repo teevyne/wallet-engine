@@ -35,11 +35,6 @@ public class WalletController {
         return walletService.findById(id);
     }
 
-//    @GetMapping("/byref/{walletId}")
-//    public Wallet getWalletByRef(@PathVariable String walletId) {
-//        return walletService.findByWalletId(walletId);
-//    }
-
     @GetMapping("/balance/{id}")
     public double getWalletBalance(@PathVariable Long id) {
         return walletService.getBalance(id);
