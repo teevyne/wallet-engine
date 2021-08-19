@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/wallet/")
@@ -30,25 +31,31 @@ public class WalletController {
         return new ResponseEntity<>(wallet, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public Wallet getWallet(@PathVariable Long id) {
-        return walletService.findById(id);
+    @GetMapping("/{walletId}")
+    public Wallet getWallet(@PathVariable Long walletId) {
+        return walletService.findById(walletId);
     }
 
-    @GetMapping("/balance/{id}")
-    public double getWalletBalance(@PathVariable Long id) {
-        return walletService.getBalance(id);
+
+    @GetMapping("/byrefid/{walletId}")
+    public Optional<Wallet> getWalletByRefId(@PathVariable String walletId) {
+        return walletService.findByWalletRefId(walletId);
     }
 
-    @PatchMapping("deactivate/{id}")
-    public ResponseEntity<String> deactivateWallet(@PathVariable Long id) {
-        walletService.deactivateWallet(id);
+    @GetMapping("/balance/{walletId}")
+    public double getWalletBalance(@PathVariable String walletId) {
+        return walletService.getBalance(walletId);
+    }
+
+    @PatchMapping("deactivate/{walletId}")
+    public ResponseEntity<String> deactivateWallet(@PathVariable String walletId) {
+        walletService.deactivateWallet(walletId);
         return new ResponseEntity<>("Wallet has been successfully deactivated", HttpStatus.OK);
     }
 
-    @PatchMapping("activate/{id}")
-    public ResponseEntity<String> activateWallet(@PathVariable Long id) {
-        walletService.activateWallet(id);
+    @PatchMapping("activate/{walletId}")
+    public ResponseEntity<String> activateWallet(@PathVariable String walletId) {
+        walletService.activateWallet(walletId);
         return new ResponseEntity<>("Wallet has been successfully activated", HttpStatus.OK);
     }
 }

@@ -35,8 +35,9 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public void deactivateWallet(Long walletId) {
-        Optional<Wallet> wallet = Optional.of(walletRepository.findById(walletId).get());
+    public void deactivateWallet(String walletId) {
+//        Optional<Wallet> wallet = Optional.of(walletRepository.findById(walletId).get());
+        Optional<Wallet> wallet = Optional.of((walletRepository.findByWalletId(walletId)));
 
         if (wallet.get().isEnabled()) {
             wallet.get().setEnabled(false);
@@ -45,8 +46,9 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public void activateWallet(Long walletId) {
-        Optional<Wallet> wallet = Optional.of(walletRepository.findById(walletId).get());
+    public void activateWallet(String walletId) {
+//        Optional<Wallet> wallet = Optional.of(walletRepository.findById(walletId).get());
+        Optional<Wallet> wallet = Optional.of(walletRepository.findByWalletId(walletId));
 
         if (!wallet.get().isEnabled()) {
             wallet.get().setEnabled(true);
@@ -60,13 +62,18 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public double getBalance(Long id) {
-        Optional<Wallet> wallet = Optional.of(walletRepository.findById(id).get());
+    public double getBalance(String id) {
+        Optional<Wallet> wallet = Optional.of(walletRepository.findByWalletId(id));
         return wallet.get().getWalletBalance();
     }
 
     @Override
     public List<Wallet> allWallets() {
         return walletRepository.findAll();
+    }
+
+    @Override
+    public Optional<Wallet> findByWalletRefId(String walletId) {
+        return Optional.of(walletRepository.findByWalletId(walletId));
     }
 }

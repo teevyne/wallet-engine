@@ -5,18 +5,21 @@ import com.opaywallet.assessment.model.WalletDTO;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Optional;
 
 public interface WalletService {
 
     Wallet createWallet(WalletDTO walletDTO, HttpServletRequest request);
 
-    void deactivateWallet(Long walletId);
+    void deactivateWallet(String walletId);
 
-    void activateWallet(Long walletId);
+    void activateWallet(String walletId);
 
     Wallet findById(Long walletId);
 
-    double getBalance(Long walletId);
+    double getBalance(String walletId);
 
     List<Wallet> allWallets();
+
+    Optional<Wallet> findByWalletRefId(String walletId);
 }
