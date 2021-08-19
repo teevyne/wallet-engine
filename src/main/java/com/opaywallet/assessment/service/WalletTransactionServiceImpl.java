@@ -26,12 +26,12 @@ public class WalletTransactionServiceImpl implements WalletTransactionService{
     @Autowired
     private WalletRepository walletRepository;
 
-    public ResponseEntity<String> deposit(double amount, Long walletId) {
+    public ResponseEntity<String> deposit(double amount, String walletId) {
 
         WalletTransaction walletTransaction = new WalletTransaction(TransactionType.DEPOSIT.getId(), amount, new Date());
         walletTransactionRepository.save(walletTransaction);
 
-        Optional<Wallet> wallet = walletRepository.findById(walletId);
+        Optional<Wallet> wallet = Optional.ofNullable(walletRepository.findByWalletId(walletId));
         double newBalance = wallet.get().getWalletBalance() + amount;
         wallet.get().setWalletBalance(newBalance);
 
@@ -42,12 +42,12 @@ public class WalletTransactionServiceImpl implements WalletTransactionService{
     }
 
     @Override
-    public ResponseEntity<String> withdraw(double amount, Long walletId) {
+    public ResponseEntity<String> withdraw(double amount, String walletId) {
 
         WalletTransaction walletTransaction = new WalletTransaction(TransactionType.WITHDRAWAL.getId(), amount, new Date());
         walletTransactionRepository.save(walletTransaction);
 
-        Optional<Wallet> wallet = walletRepository.findById(walletId);
+        Optional<Wallet> wallet = Optional.ofNullable(walletRepository.findByWalletId(walletId));
         if (wallet.isPresent()) {
             if (wallet.get().getWalletBalance() >= amount) {
                 double newBalance = wallet.get().getWalletBalance() - amount;

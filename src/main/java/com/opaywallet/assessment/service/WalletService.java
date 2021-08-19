@@ -22,4 +22,6 @@ public interface WalletService {
     List<Wallet> allWallets();
 
     Optional<Wallet> findByWalletRefId(String walletId);
+
+    Optional<Wallet> findByPhoneNumber(String walletId);
 }

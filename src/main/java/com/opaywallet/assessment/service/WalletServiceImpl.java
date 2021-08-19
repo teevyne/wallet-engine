@@ -24,20 +24,29 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public Wallet createWallet(WalletDTO walletDTO, HttpServletRequest request) {
 
-        Wallet newWallet = new Wallet();
+        Wallet wallet = walletRepository.findByCustomerPhoneNumber(walletDTO.getPhoneNumber());
 
-        newWallet.setCustomerPhoneNumber(walletDTO.getPhoneNumber());
-        newWallet.setWalletBalance(0.0);
-        newWallet.setWalletId(walletPrefix + RandomString.make(10).toUpperCase());
+        if (wallet != null) {
+            // tell them a wallet with the phone number already exists;
+            return null;
+        }
+        else {
 
-        log.info("New Wallet successfully created");
-        return walletRepository.save(newWallet);
+            Wallet newWallet = new Wallet();
+            System.out.println(walletDTO.getPhoneNumber());
+
+            newWallet.setCustomerPhoneNumber(walletDTO.getPhoneNumber());
+            newWallet.setWalletBalance(0.0);
+            newWallet.setWalletId(walletPrefix + RandomString.make(10).toUpperCase());
+
+            log.info("New Wallet successfully created");
+            return walletRepository.save(newWallet);
+        }
     }
 
     @Override
     public void deactivateWallet(String walletId) {
-//        Optional<Wallet> wallet = Optional.of(walletRepository.findById(walletId).get());
-        Optional<Wallet> wallet = Optional.of((walletRepository.findByWalletId(walletId)));
+        Optional<Wallet> wallet = Optional.ofNullable(walletRepository.findByWalletId(walletId));
 
         if (wallet.get().isEnabled()) {
             wallet.get().setEnabled(false);
@@ -47,8 +56,7 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public void activateWallet(String walletId) {
-//        Optional<Wallet> wallet = Optional.of(walletRepository.findById(walletId).get());
-        Optional<Wallet> wallet = Optional.of(walletRepository.findByWalletId(walletId));
+        Optional<Wallet> wallet = Optional.ofNullable(walletRepository.findByWalletId(walletId));
 
         if (!wallet.get().isEnabled()) {
             wallet.get().setEnabled(true);
@@ -75,5 +83,14 @@ public class WalletServiceImpl implements WalletService {
     @Override
     public Optional<Wallet> findByWalletRefId(String walletId) {
         return Optional.of(walletRepository.findByWalletId(walletId));
+    }
+
+    @Override
+    public Optional<Wallet> findByPhoneNumber(String phoneNumber) {
+        return Optional.of(walletRepository.findByCustomerPhoneNumber(phoneNumber));
+    }
+
+    public Wallet getAnotherWallet(String phoneNumber) {
+        return walletRepository.findByCustomerPhoneNumber(phoneNumber);
     }
 }

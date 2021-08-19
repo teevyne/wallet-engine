@@ -7,6 +7,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -15,6 +17,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class WalletRepositoryTest {
 
     Wallet wallet;
+
+    @Autowired
+    private TestEntityManager entityManager;
 
     @BeforeEach
     void setUp() {
@@ -39,9 +44,10 @@ class WalletRepositoryTest {
 
         log.info("Saving wallet {} into the database", wallet);
 
-        Wallet aNewWallet = walletRepository.save(wallet);
+        Wallet savedWallet = walletRepository.save(wallet);
+        Wallet existingWallet = entityManager.find(Wallet.class, savedWallet.getId());
 
-        assertThat(aNewWallet.getId()).isNotNull();
+        assertThat(wallet.getWalletId()).isEqualTo(existingWallet.getWalletId());
     }
 
     @Test
@@ -51,5 +57,14 @@ class WalletRepositoryTest {
         wallet = walletRepository.findById((long) 1).orElse(null);
         assertThat(wallet).isNotNull();
         log.info("Test wallet retrieved from the database ---> " + wallet);
+    }
+
+    @Test
+    void testFindByPhoneNumberInTheDB() {
+
+        String phoneNumber = "09022992235";
+        wallet = walletRepository.findByCustomerPhoneNumber(phoneNumber);
+        log.info(String.valueOf(wallet));
+        assertThat(wallet).isNotNull();
     }
 }

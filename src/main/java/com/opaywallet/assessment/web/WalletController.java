@@ -26,8 +26,8 @@ public class WalletController {
 
     @PostMapping("create")
     public ResponseEntity<?> createWallet(@RequestBody WalletDTO walletDTO, HttpServletRequest request) {
+        System.out.println(walletDTO);
         Wallet wallet = walletService.createWallet(walletDTO, request);
-
         return new ResponseEntity<>(wallet, HttpStatus.OK);
     }
 
@@ -36,10 +36,14 @@ public class WalletController {
         return walletService.findById(walletId);
     }
 
-
     @GetMapping("/byrefid/{walletId}")
     public Optional<Wallet> getWalletByRefId(@PathVariable String walletId) {
         return walletService.findByWalletRefId(walletId);
+    }
+
+    @GetMapping("/byphonenumber/{phoneNumber}")
+    public Optional<Wallet> getWalletByPhoneNumber(@PathVariable String phoneNumber) {
+        return walletService.findByPhoneNumber(phoneNumber);
     }
 
     @GetMapping("/balance/{walletId}")
