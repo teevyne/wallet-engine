@@ -17,14 +17,14 @@ public class WalletTransactionController {
     private WalletTransactionService walletTransactionService;
 
     @GetMapping("transactions")
-    public List<WalletTransaction> allTnxs(){
+    public List<WalletTransaction> allTransactions(){
         return walletTransactionService.findAll();
     }
 
     @PostMapping("deposit/{amount}/{walletId}")
     public ResponseEntity<String> payIntoAccount(@RequestBody WalletTransaction walletTransaction,
                                                  @PathVariable double amount,
-                                                 @PathVariable Long walletId) {
+                                                 @PathVariable String walletId) {
 
         walletTransactionService.deposit(amount, walletId);
         return new ResponseEntity<>("Deposit Successful", HttpStatus.OK);
@@ -33,7 +33,7 @@ public class WalletTransactionController {
     @PostMapping("withdraw/{amount}/{walletId}")
     public ResponseEntity<String> drawFromAccount(@RequestBody WalletTransaction walletTransaction,
                                                  @PathVariable double amount,
-                                                 @PathVariable Long walletId) {
+                                                 @PathVariable String walletId) {
 
         walletTransactionService.withdraw(amount, walletId);
         return new ResponseEntity<>("Withdrawal Successful", HttpStatus.OK);

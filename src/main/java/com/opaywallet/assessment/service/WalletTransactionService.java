@@ -6,11 +6,9 @@ import java.util.List;
 
 public interface WalletTransactionService {
 
-    ResponseEntity<String> deposit(double amount, Long walletId);
+    ResponseEntity<String> deposit(double amount, String walletId);
 
-    ResponseEntity<String> withdraw(double amount, Long walletId);
+    ResponseEntity<String> withdraw(double amount, String walletId);
 
     List<WalletTransaction> findAll();
-
-    WalletTransaction findById(Long transactionID);
 }

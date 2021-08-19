@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface WalletRepository extends JpaRepository<Wallet, Long> {
 
     Wallet findByWalletId(String walletId);
+
+    Wallet findByCustomerPhoneNumber(String phoneNumber);
 }

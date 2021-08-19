@@ -17,9 +17,9 @@ public class Wallet {
 
     private String walletId;
 
-    @Column(unique=true)
     private double walletBalance;
 
+    @Column(unique=true)
     private String customerPhoneNumber;
 
     private boolean enabled = true;
