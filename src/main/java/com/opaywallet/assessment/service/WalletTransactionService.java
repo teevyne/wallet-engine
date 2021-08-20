@@ -1,14 +1,15 @@
 package com.opaywallet.assessment.service;
 
 import com.opaywallet.assessment.model.WalletTransaction;
-import org.springframework.http.ResponseEntity;
+import com.opaywallet.assessment.model.dtos.WalletTransactionDTO;
+
 import java.util.List;
 
 public interface WalletTransactionService {
 
-    ResponseEntity<String> deposit(double amount, String walletId);
+    void deposit(WalletTransactionDTO walletTransactionDTO, String walletId);
 
-    ResponseEntity<String> withdraw(double amount, String walletId);
+    void withdraw(WalletTransactionDTO walletTransactionDTO, String walletId);
 
     List<WalletTransaction> findAll();
 }

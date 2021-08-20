@@ -1,7 +1,8 @@
 package com.opaywallet.assessment.service;
 
 import com.opaywallet.assessment.model.Wallet;
-import com.opaywallet.assessment.model.WalletDTO;
+import com.opaywallet.assessment.model.dtos.WalletBalanceDTO;
+import com.opaywallet.assessment.model.dtos.WalletDTO;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.Optional;
 
 public interface WalletService {
 
-    Wallet createWallet(WalletDTO walletDTO, HttpServletRequest request);
+    void createWallet(WalletDTO walletDTO, HttpServletRequest request);
 
     void deactivateWallet(String walletId);
 
@@ -23,5 +24,5 @@ public interface WalletService {
 
     Optional<Wallet> findByWalletRefId(String walletId);
 
-    Optional<Wallet> findByPhoneNumber(String walletId);
+    Wallet findByPhoneNumber(String phoneNumber);
 }
