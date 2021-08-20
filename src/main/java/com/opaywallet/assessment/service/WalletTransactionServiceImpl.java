@@ -27,6 +27,7 @@ public class WalletTransactionServiceImpl implements WalletTransactionService{
         WalletTransaction walletTransaction = new WalletTransaction(
                 TransactionType.DEPOSIT.getId(),
                 walletTransactionDTO.getTransactionAmount(),
+                walletTransactionDTO.getWalletId(),
                 new Date());
         WalletTransaction walletTwo = walletTransactionRepository.save(walletTransaction);
 
@@ -44,6 +45,7 @@ public class WalletTransactionServiceImpl implements WalletTransactionService{
         WalletTransaction walletTransaction = new WalletTransaction(
                 TransactionType.WITHDRAWAL.getId(),
                 walletTransactionDTO.getTransactionAmount(),
+                walletTransactionDTO.getWalletId(),
                 new Date());
         WalletTransaction walletTwo = walletTransactionRepository.save(walletTransaction);
 
