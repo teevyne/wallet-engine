@@ -2,10 +2,7 @@ package com.opaywallet.assessment.web;
 
 import com.opaywallet.assessment.helper.ResponseMessage;
 import com.opaywallet.assessment.model.Wallet;
-import com.opaywallet.assessment.model.dtos.ActivateWalletDTO;
-import com.opaywallet.assessment.model.dtos.DeactivateWalletDTO;
-import com.opaywallet.assessment.model.dtos.WalletBalanceDTO;
-import com.opaywallet.assessment.model.dtos.WalletDTO;
+import com.opaywallet.assessment.model.dtos.*;
 import com.opaywallet.assessment.service.WalletService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,8 +55,8 @@ public class WalletController {
         return walletService.findByWalletRefId(walletBalanceDTO.getWalletId());
     }
 
-    @GetMapping("/byphonenumber")
-    public Wallet getWalletByPhoneNumber(@RequestBody WalletDTO walletDTO) {
+    @GetMapping("byphonenumber")
+    public Wallet getWalletByPhoneNumber(@RequestBody WalletQueryDTO walletDTO) {
         return walletService.findByPhoneNumber(walletDTO.getPhoneNumber());
     }
 
