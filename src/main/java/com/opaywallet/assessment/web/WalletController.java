@@ -2,6 +2,7 @@ package com.opaywallet.assessment.web;
 
 import com.opaywallet.assessment.helper.ResponseMessage;
 import com.opaywallet.assessment.model.Wallet;
+import com.opaywallet.assessment.model.dtos.ActivateWalletDTO;
 import com.opaywallet.assessment.model.dtos.DeactivateWalletDTO;
 import com.opaywallet.assessment.model.dtos.WalletBalanceDTO;
 import com.opaywallet.assessment.model.dtos.WalletDTO;
@@ -52,14 +53,14 @@ public class WalletController {
         return walletService.findById(walletId);
     }
 
-    @GetMapping("/byrefid/{walletId}")
-    public Optional<Wallet> getWalletByRefId(@PathVariable String walletId) {
-        return walletService.findByWalletRefId(walletId);
+    @GetMapping("/byrefid")
+    public Optional<Wallet> getWalletByRefId(@RequestBody WalletBalanceDTO walletBalanceDTO) {
+        return walletService.findByWalletRefId(walletBalanceDTO.getWalletId());
     }
 
-    @GetMapping("/byphonenumber/{phoneNumber}")
-    public Wallet getWalletByPhoneNumber(@PathVariable String phoneNumber) {
-        return walletService.findByPhoneNumber(phoneNumber);
+    @GetMapping("/byphonenumber")
+    public Wallet getWalletByPhoneNumber(@RequestBody WalletDTO walletDTO) {
+        return walletService.findByPhoneNumber(walletDTO.getPhoneNumber());
     }
 
     @GetMapping("/balance")
@@ -68,16 +69,34 @@ public class WalletController {
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
     }
 
-    @GetMapping("deactivate/")
+    @GetMapping("/deactivate")
     public ResponseEntity<ResponseMessage> deactivateWallet(@RequestBody DeactivateWalletDTO deactivateWalletDTO) {
-        walletService.deactivateWallet(deactivateWalletDTO.getWalletId());
-        message = "Wallet has been deactivated";
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+        Optional<Wallet> wallet = walletService.findByWalletRefId(deactivateWalletDTO.getWalletId());
+
+        if (!wallet.get().isEnabled()){
+            message = "Sorry! This wallet is already inactive";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
+        }
+        else {
+            walletService.deactivateWallet(deactivateWalletDTO.getWalletId());
+            message = "Wallet has been deactivated";
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+        }
     }
 
-    @PatchMapping("activate/{walletId}")
-    public ResponseEntity<String> activateWallet(@PathVariable String walletId) {
-        walletService.activateWallet(walletId);
-        return new ResponseEntity<>("Wallet has been successfully activated", HttpStatus.OK);
+    @GetMapping("/activate")
+    public ResponseEntity<ResponseMessage>  activateWallet(@RequestBody ActivateWalletDTO activateWalletDTO) {
+
+        Optional<Wallet> wallet = walletService.findByWalletRefId(activateWalletDTO.getWalletId());
+
+        if (wallet.get().isEnabled()){
+            message = "Sorry! This wallet is already active";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
+        }
+        else {
+            walletService.activateWallet(activateWalletDTO.getWalletId());
+            message = "Wallet has been activated";
+            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+        }
     }
 }

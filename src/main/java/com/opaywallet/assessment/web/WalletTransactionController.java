@@ -26,45 +26,56 @@ public class WalletTransactionController {
     @Autowired
     private WalletService walletService;
 
-    @GetMapping("transactions")
+    @GetMapping("/transactions")
     public List<WalletTransaction> allTransactions(){
         return walletTransactionService.findAll();
     }
 
-    @PostMapping("deposit/{walletId}")
-    public ResponseEntity<ResponseMessage>  payIntoAccount(@RequestBody WalletTransactionDTO walletTransactionDTO,
-                                                           @PathVariable String walletId) {
+    @PostMapping("/deposit")
+    public ResponseEntity<ResponseMessage>  payIntoAccount(@RequestBody WalletTransactionDTO walletTransactionDTO) {
 
-        if (walletTransactionDTO.getTransactionAmount() >= 0){
-            walletTransactionService.deposit(walletTransactionDTO, walletId);
-            message = "Deposit successfully made into the wallet";
-            return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
-        }
-        else {
-            message = "Unsuccessful! You have entered an invalid amount. Try again!";
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
-        }
-    }
+        Optional<Wallet> wallet = walletService.findByWalletRefId(walletTransactionDTO.getWalletId());
 
-    @PostMapping("withdraw/{walletId}")
-    public ResponseEntity<ResponseMessage> drawFromAccount(@RequestBody WalletTransactionDTO walletTransactionDTO,
-                                                  @PathVariable String walletId) {
+        if (wallet.get().isEnabled()) {
 
-        Optional<Wallet> wallet = walletService.findByWalletRefId(walletId);
-
-        if (walletTransactionDTO.getTransactionAmount() >= 0) {
-            if (wallet.get().getWalletBalance() >= walletTransactionDTO.getTransactionAmount()) {
-                walletTransactionService.withdraw(walletTransactionDTO, walletId);
-                message = "Withdrawal successfully made from the wallet";
+            if (walletTransactionDTO.getTransactionAmount() >= 0){
+                walletTransactionService.deposit(walletTransactionDTO, walletTransactionDTO.getWalletId());
+                message = "Deposit successfully made into the wallet";
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
             }
             else {
-                message = "Unsuccessful! You have insufficient funds in your wallet!";
+                message = "Unsuccessful! You have entered an invalid amount. Try again!";
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
             }
         }
         else {
-            message = "Unsuccessful! You have entered an invalid amount. Try again!";
+            message = "Unsuccessful! This wallet is not active at the moment!";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
+        }
+    }
+
+    @PostMapping("/withdraw")
+    public ResponseEntity<ResponseMessage> drawFromAccount(@RequestBody WalletTransactionDTO walletTransactionDTO) {
+
+        Optional<Wallet> wallet = walletService.findByWalletRefId(walletTransactionDTO.getWalletId());
+
+        if (wallet.get().isEnabled()) {
+            if (walletTransactionDTO.getTransactionAmount() >= 0) {
+                if (wallet.get().getWalletBalance() >= walletTransactionDTO.getTransactionAmount()) {
+                    walletTransactionService.withdraw(walletTransactionDTO, walletTransactionDTO.getWalletId());
+                    message = "Withdrawal successfully made from the wallet";
+                    return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+                } else {
+                    message = "Unsuccessful! You have insufficient funds in your wallet!";
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
+                }
+            } else {
+                message = "Unsuccessful! You have entered an invalid amount. Try again!";
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
+            }
+        }
+        else {
+            message = "Unsuccessful! This wallet is not active at the moment!";
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
         }
     }

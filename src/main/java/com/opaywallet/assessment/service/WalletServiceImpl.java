@@ -1,7 +1,6 @@
 package com.opaywallet.assessment.service;
 
 import com.opaywallet.assessment.model.Wallet;
-import com.opaywallet.assessment.model.dtos.WalletBalanceDTO;
 import com.opaywallet.assessment.model.dtos.WalletDTO;
 import com.opaywallet.assessment.repository.WalletRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -30,25 +29,20 @@ public class WalletServiceImpl implements WalletService {
         newWallet.setCustomerPhoneNumber(walletDTO.getPhoneNumber());
         newWallet.setWalletBalance(0.0);
         newWallet.setWalletId(walletPrefix + RandomString.make(10).toUpperCase());
-
         walletRepository.save(newWallet);
     }
 
     @Override
     public void deactivateWallet(String walletId) {
         Optional<Wallet> wallet = Optional.of(walletRepository.findByWalletId(walletId));
-        if (wallet.get().isEnabled()) {
-            wallet.get().setEnabled(false);
-        }
+        wallet.get().setEnabled(false);
         walletRepository.save(wallet.get());
     }
 
     @Override
     public void activateWallet(String walletId) {
         Optional<Wallet> wallet = Optional.of(walletRepository.findByWalletId(walletId));
-        if (!wallet.get().isEnabled()) {
-            wallet.get().setEnabled(true);
-        }
+        wallet.get().setEnabled(true);
         walletRepository.save(wallet.get());
     }
 

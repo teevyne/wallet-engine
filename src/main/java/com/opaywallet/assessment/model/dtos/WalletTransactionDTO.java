@@ -15,5 +15,7 @@ public class WalletTransactionDTO {
 
     private double transactionAmount;
 
+    private String walletId;
+
 //    private Date transactionDate;
 }

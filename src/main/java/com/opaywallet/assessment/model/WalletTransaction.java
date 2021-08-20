@@ -24,11 +24,14 @@ public class WalletTransaction {
 
     private double transactionAmount;
 
+    private String walletId;
+
     private Date transactionDate;
 
-    public WalletTransaction(int transactionType, double transactionAmount, Date transactionDate) {
+    public WalletTransaction(int transactionType, double transactionAmount, String walletId, Date transactionDate) {
         this.transactionType = transactionType;
         this.transactionAmount = transactionAmount;
         this.transactionDate = transactionDate;
+        this.walletId = walletId;
     }
 }
