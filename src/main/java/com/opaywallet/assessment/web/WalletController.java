@@ -1,8 +1,12 @@
 package com.opaywallet.assessment.web;
 
+import com.opaywallet.assessment.helper.ResponseMessage;
 import com.opaywallet.assessment.model.Wallet;
-import com.opaywallet.assessment.model.WalletDTO;
+import com.opaywallet.assessment.model.dtos.DeactivateWalletDTO;
+import com.opaywallet.assessment.model.dtos.WalletBalanceDTO;
+import com.opaywallet.assessment.model.dtos.WalletDTO;
 import com.opaywallet.assessment.service.WalletService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +18,10 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/wallet/")
+@Slf4j
 public class WalletController {
+
+    String message = "";
 
     @Autowired
     private WalletService walletService;
@@ -25,10 +32,19 @@ public class WalletController {
     }
 
     @PostMapping("create")
-    public ResponseEntity<?> createWallet(@RequestBody WalletDTO walletDTO, HttpServletRequest request) {
-        System.out.println(walletDTO);
-        Wallet wallet = walletService.createWallet(walletDTO, request);
-        return new ResponseEntity<>(wallet, HttpStatus.OK);
+    public ResponseEntity<ResponseMessage>  createWallet(@RequestBody WalletDTO walletDTO, HttpServletRequest request) {
+
+        Wallet wallet = walletService.findByPhoneNumber(walletDTO.getPhoneNumber());
+
+        if (wallet == null){
+            walletService.createWallet(walletDTO, request);
+            message = "New Wallet successfully created for " + walletDTO.getPhoneNumber();
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseMessage(message));
+        }
+        else {
+            message = "Unsuccessful! An account already exists with the phone number " + walletDTO.getPhoneNumber();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
+        }
     }
 
     @GetMapping("/{walletId}")
@@ -42,19 +58,21 @@ public class WalletController {
     }
 
     @GetMapping("/byphonenumber/{phoneNumber}")
-    public Optional<Wallet> getWalletByPhoneNumber(@PathVariable String phoneNumber) {
+    public Wallet getWalletByPhoneNumber(@PathVariable String phoneNumber) {
         return walletService.findByPhoneNumber(phoneNumber);
     }
 
-    @GetMapping("/balance/{walletId}")
-    public double getWalletBalance(@PathVariable String walletId) {
-        return walletService.getBalance(walletId);
+    @GetMapping("/balance")
+    public ResponseEntity<ResponseMessage>  getWalletBalance(@RequestBody WalletBalanceDTO walletBalanceDTO) {
+        message = "Your current wallet balance is " + walletService.getBalance(walletBalanceDTO.getWalletId());
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
     }
 
-    @PatchMapping("deactivate/{walletId}")
-    public ResponseEntity<String> deactivateWallet(@PathVariable String walletId) {
-        walletService.deactivateWallet(walletId);
-        return new ResponseEntity<>("Wallet has been successfully deactivated", HttpStatus.OK);
+    @GetMapping("deactivate/")
+    public ResponseEntity<ResponseMessage> deactivateWallet(@RequestBody DeactivateWalletDTO deactivateWalletDTO) {
+        walletService.deactivateWallet(deactivateWalletDTO.getWalletId());
+        message = "Wallet has been deactivated";
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
     }
 
     @PatchMapping("activate/{walletId}")

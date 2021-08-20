@@ -1,4 +1,4 @@
-package com.opaywallet.assessment.model;
+package com.opaywallet.assessment.helper;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class WalletDTO {
+public class ResponseMessage {
 
-    private String phoneNumber;
+    private String message;
 }

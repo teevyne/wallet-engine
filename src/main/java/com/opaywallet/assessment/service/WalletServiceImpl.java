@@ -1,7 +1,8 @@
 package com.opaywallet.assessment.service;
 
 import com.opaywallet.assessment.model.Wallet;
-import com.opaywallet.assessment.model.WalletDTO;
+import com.opaywallet.assessment.model.dtos.WalletBalanceDTO;
+import com.opaywallet.assessment.model.dtos.WalletDTO;
 import com.opaywallet.assessment.repository.WalletRepository;
 import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.utility.RandomString;
@@ -22,32 +23,20 @@ public class WalletServiceImpl implements WalletService {
     String walletPrefix = "WID";
 
     @Override
-    public Wallet createWallet(WalletDTO walletDTO, HttpServletRequest request) {
+    public void createWallet(WalletDTO walletDTO, HttpServletRequest request) {
 
-        Wallet wallet = walletRepository.findByCustomerPhoneNumber(walletDTO.getPhoneNumber());
+        Wallet newWallet = new Wallet();
 
-        if (wallet != null) {
-            // tell them a wallet with the phone number already exists;
-            return null;
-        }
-        else {
+        newWallet.setCustomerPhoneNumber(walletDTO.getPhoneNumber());
+        newWallet.setWalletBalance(0.0);
+        newWallet.setWalletId(walletPrefix + RandomString.make(10).toUpperCase());
 
-            Wallet newWallet = new Wallet();
-            System.out.println(walletDTO.getPhoneNumber());
-
-            newWallet.setCustomerPhoneNumber(walletDTO.getPhoneNumber());
-            newWallet.setWalletBalance(0.0);
-            newWallet.setWalletId(walletPrefix + RandomString.make(10).toUpperCase());
-
-            log.info("New Wallet successfully created");
-            return walletRepository.save(newWallet);
-        }
+        walletRepository.save(newWallet);
     }
 
     @Override
     public void deactivateWallet(String walletId) {
-        Optional<Wallet> wallet = Optional.ofNullable(walletRepository.findByWalletId(walletId));
-
+        Optional<Wallet> wallet = Optional.of(walletRepository.findByWalletId(walletId));
         if (wallet.get().isEnabled()) {
             wallet.get().setEnabled(false);
         }
@@ -56,8 +45,7 @@ public class WalletServiceImpl implements WalletService {
 
     @Override
     public void activateWallet(String walletId) {
-        Optional<Wallet> wallet = Optional.ofNullable(walletRepository.findByWalletId(walletId));
-
+        Optional<Wallet> wallet = Optional.of(walletRepository.findByWalletId(walletId));
         if (!wallet.get().isEnabled()) {
             wallet.get().setEnabled(true);
         }
@@ -70,8 +58,9 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public double getBalance(String id) {
-        Optional<Wallet> wallet = Optional.of(walletRepository.findByWalletId(id));
+    public double getBalance(String walletId) {
+
+        Optional<Wallet> wallet = Optional.of(walletRepository.findByWalletId(walletId));
         return wallet.get().getWalletBalance();
     }
 
@@ -86,11 +75,7 @@ public class WalletServiceImpl implements WalletService {
     }
 
     @Override
-    public Optional<Wallet> findByPhoneNumber(String phoneNumber) {
-        return Optional.of(walletRepository.findByCustomerPhoneNumber(phoneNumber));
-    }
-
-    public Wallet getAnotherWallet(String phoneNumber) {
-        return walletRepository.findByCustomerPhoneNumber(phoneNumber);
+    public Wallet findByPhoneNumber(String phoneNumber) {
+        return (walletRepository.findByCustomerPhoneNumber(phoneNumber));
     }
 }
